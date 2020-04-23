@@ -4,9 +4,6 @@
     * blue=>prediction, green=>ground truth
     <img src='git_image/ex2/CHNCXR_0629_1.iou(0.8891).dice(0.9413).acc(0.9688).f1(0.9413).png' align="left">
 
-## result
-
-
 ## reference
 * Reference paper: [PANet](http://openaccess.thecvf.com/content_ICCV_2019/papers/Wang_PANet_Few-Shot_Image_Semantic_Segmentation_With_Prototype_Alignment_ICCV_2019_paper.pdf) 
 * Original code: [https://github.com/kaixin96/PANet](https://github.com/kaixin96/PANet)

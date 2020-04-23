@@ -1,0 +1,113 @@
+# GPU #########################################################################
+gpus: '6' # ex) '3,4'
+# Model Configuration #########################################################
+model:
+    arch: panet_unet # resnet_unet / resnet_unet2 / resnet34_unet / resnet34_unet2 / resnext50_unet2 / nested_unet
+    pretrained_path: /home/dawoon/proj/PANet/pretrained_model/vgg16-397923af.pth # pytorch pretrain model
+    pretrained: True
+
+# Data Configuration ##########################################################
+data:
+    dataset: fss
+    data_root: /data/dawoon/data/FSS-1000/fewshot_data
+    train_label_path_list: [
+        'data/fss_train_classes.csv',
+    ]
+    valid_label_path: data/fss_test_classes.csv
+
+    # feature 추출 대상 데이터
+    # image_root: /home/dawoon/data/Kaggle_DR/origin/train
+    # image_root_test: /home/dawoon/data/Kaggle_DR/test_eyeq
+    # train_label_path_for_feature: data/Label_EyeQ_v1.train.csv
+    # test_label_path_for_feature: data/Label_EyeQ_v1.test.csv
+
+    x_key: class
+    # y_key: mask
+
+    num_classes: 1
+    class_names: ['foreground']
+    seed: 1337 # 1337
+
+# Augmentations ###############################################################
+augmentations:
+    train_augmentations: # (첨엔, 많이 주지 말고 해보기..)
+        np_scale: 224
+#        np_random_rotate:
+        np_random_hflip:
+    valid_augmentations: # prediction 용 이미지 만들때,
+        np_scale: 224
+
+# Training Configuration ######################################################
+train:
+    n_workers: 16
+    batch_size: 1 
+    n_epoch: 50 
+    # n_episode: 1000
+    ############################################################################
+    save_dir_path: /data/dawoon/proj/few_shot_dawoon/output/models/_
+    log_dir_path: /data/dawoon/proj/few_shot_dawoon/log/train/_
+    # ex1: base
+    # ex2: change optimizer(sgd => adam) (lung seg mean dice: 0.8516 )
+    # ex4: ex2 + change psnet => panet_unet (lung seg mean dice: 0.6499, fss test 성능은 ex2보다 좋았다...)
+
+    # Debug
+    on_debug: False
+    model_summary: True
+    # print_interval: 20
+    # save_pred_every: 10
+    n_valid_per_epoch: 1  # 1 epoch 에서 몇번 validation 할 건지
+    # Loss
+    loss:
+        name: cross_entropy # dice_disc_cup / binary_cross_entropy  / cross_entropy
+
+    # Optmizer Configuration
+    optimizer:
+        # # name: adam
+        # name: sgd
+        # # Params of optimizer
+        # lr: 1.0e-3
+        # momentum: 0.9
+        # weight_decay: 0.0005
+
+        name: adam
+        # Params of optimizer
+        lr: 1.0e-4
+
+    # LR Schedule Configuration
+    lr_schedule:
+        # name: escape_plateau
+        # # Params of Scheduler
+        # mode: 'min'
+        # factor: 0.2
+        # patience: 1
+        # min_lr: 1.0e-10
+        # verbose: True
+
+        name: multi_step
+        # Params of Scheduler
+        gamma: 0.1
+        milestones: [20, 40]
+
+    # Resume from checkpoint
+    resume: # /data/dawoon/proj/few_shot_dawoon/output/models/ex1/epoch_8_lr_0.00005/panet_fss.0.7747.pth.tar
+    metric_list: [ 'loss', 'dice', 'iou', 'acc', 'sensitivity', 'specificity']
+
+
+# Test Configuration ######################################################
+test:
+
+    # checkpoint: /data/dawoon/proj/few_shot_dawoon/output/models/ex2/panet_fss.0.8392.pth.tar
+    checkpoint: /data/dawoon/proj/few_shot_dawoon/output/models/ex4/panet_unet_fss.0.8631.46.pth.tar
+
+    log_dir_path: /data/dawoon/proj/few_shot_dawoon/log/_/
+    # result_dir_path: /data/dawoon/proj/few_shot_dawoon/output/models/ex4/test/lung_segmentation
+    result_dir_path: /data/dawoon/proj/few_shot_dawoon/output/models/ex4/test/lung_segmentation
+
+    # # # lung seg
+    support_list: [
+        {'image': /data/dawoon/data/xray/CXR_seg_lung/ChinaSet_AllFiles/ChinaSet_AllFiles/CXR_png/CHNCXR_0005_0.png, 'mask': /data/dawoon/data/xray/CXR_seg_lung/shcxr-lung-mask/mask/mask/CHNCXR_0005_0_mask.png},
+        {'image': /data/dawoon/data/xray/CXR_seg_lung/ChinaSet_AllFiles/ChinaSet_AllFiles/CXR_png/CHNCXR_0013_0.png, 'mask': /data/dawoon/data/xray/CXR_seg_lung/shcxr-lung-mask/mask/mask/CHNCXR_0013_0_mask.png},
+        {'image': /data/dawoon/data/xray/CXR_seg_lung/ChinaSet_AllFiles/ChinaSet_AllFiles/CXR_png/CHNCXR_0054_0.png, 'mask': /data/dawoon/data/xray/CXR_seg_lung/shcxr-lung-mask/mask/mask/CHNCXR_0054_0_mask.png},
+        {'image': /data/dawoon/data/xray/CXR_seg_lung/ChinaSet_AllFiles/ChinaSet_AllFiles/CXR_png/CHNCXR_0058_0.png, 'mask': /data/dawoon/data/xray/CXR_seg_lung/shcxr-lung-mask/mask/mask/CHNCXR_0058_0_mask.png},
+        {'image': /data/dawoon/data/xray/CXR_seg_lung/ChinaSet_AllFiles/ChinaSet_AllFiles/CXR_png/CHNCXR_0091_0.png, 'mask': /data/dawoon/data/xray/CXR_seg_lung/shcxr-lung-mask/mask/mask/CHNCXR_0091_0_mask.png}
+    ]

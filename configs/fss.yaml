@@ -2,7 +2,7 @@
 gpus: '6' # ex) '3,4'
 # Model Configuration #########################################################
 model:
-    arch: panet_unet # resnet_unet / resnet_unet2 / resnet34_unet / resnet34_unet2 / resnext50_unet2 / nested_unet
+    arch: panet_psp # resnet_unet / resnet_unet2 / resnet34_unet / resnet34_unet2 / resnext50_unet2 / nested_unet
     pretrained_path: /home/dawoon/proj/PANet/pretrained_model/vgg16-397923af.pth # pytorch pretrain model
     pretrained: True
 
@@ -44,11 +44,12 @@ train:
     n_epoch: 50 
     # n_episode: 1000
     ############################################################################
-    save_dir_path: /data/dawoon/proj/few_shot_dawoon/output/models/_
-    log_dir_path: /data/dawoon/proj/few_shot_dawoon/log/train/_
+    save_dir_path: /data/dawoon/proj/fewshot_segmentation/output/models/ex5
+    log_dir_path: /data/dawoon/proj/fewshot_segmentation/log/train/ex5
     # ex1: base
     # ex2: change optimizer(sgd => adam) (lung seg mean dice: 0.8516 )
     # ex4: ex2 + change psnet => panet_unet (lung seg mean dice: 0.6499, fss test 성능은 ex2보다 좋았다...)
+    # ex5: ex2 + change psnet => panet_papnet 
 
     # Debug
     on_debug: False
@@ -97,11 +98,11 @@ train:
 test:
 
     # checkpoint: /data/dawoon/proj/few_shot_dawoon/output/models/ex2/panet_fss.0.8392.pth.tar
-    checkpoint: /data/dawoon/proj/few_shot_dawoon/output/models/ex4/panet_unet_fss.0.8631.46.pth.tar
+    checkpoint: /data/dawoon/proj/fewshot_segmentation/output/models/ex4/panet_unet_fss.0.8631.46.pth.tar
 
-    log_dir_path: /data/dawoon/proj/few_shot_dawoon/log/_/
+    log_dir_path: /data/dawoon/proj/fewshot_segmentation/log/_/
     # result_dir_path: /data/dawoon/proj/few_shot_dawoon/output/models/ex4/test/lung_segmentation
-    result_dir_path: /data/dawoon/proj/few_shot_dawoon/output/models/ex4/test/lung_segmentation
+    result_dir_path: /data/dawoon/proj/fewshot_segmentation/output/models/ex4/test/lung_segmentation
 
     # # # lung seg
     support_list: [
